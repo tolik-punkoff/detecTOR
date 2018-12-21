@@ -20,6 +20,9 @@ namespace DetecTOR
         NetSettings netSettings = null;
         CSVWork CSVLoader = null;
         bool FromInternet = false;
+        string SxPath = "";
+        string ReportName = "";
+        string TorPath = "";
 
         private void frmMain_Load(object sender, EventArgs e)
         {
@@ -54,6 +57,9 @@ namespace DetecTOR
                 lblMessage.Text = netSettings.ConfigError;
                 return;
             }
+
+            TorPath = CommonFunctions.SettingsPath +
+                CommonFunctions.TorDir + CommonFunctions.IPDatabaseFile;
         }
 
         public void LoadTORData()
@@ -64,9 +70,10 @@ namespace DetecTOR
                 lblMessage.ForeColor = Color.Red;
                 lblMessage.Text = "Не указан адрес базы данных TOR-адресов!";
             }
+
             
-            SendRequest req = new SendRequest(URL, CommonFunctions.SettingsPath +
-                CommonFunctions.IPDatabaseFile);
+            
+            SendRequest req = new SendRequest(URL, TorPath);
             req.ProxyAddress = netSettings.ProxyAddress;
             req.ProxyPassword = netSettings.ProxyPassword;
             req.ProxyPort = netSettings.ProxyPort;
@@ -124,8 +131,7 @@ namespace DetecTOR
             CSVLoader.IPField = settings.Settings.IPColumn;
             CSVLoader.FalseValue = settings.Settings.FalseValue;
             CSVLoader.TrueValue = settings.Settings.TrueValue;
-            CSVLoader.FileName = CommonFunctions.SettingsPath +
-                CommonFunctions.IPDatabaseFile;
+            CSVLoader.FileName = TorPath;
             
             CSVLoader.Loading += new CSVWork.OnLoading(CSVLoader_Loading);
             CSVLoader.OK += new CSVWork.OnOK(CSVLoader_OK);
@@ -177,6 +183,39 @@ namespace DetecTOR
             });
         }
 
+        void ValidateSxGeo()
+        {
+            //проверяем наличие БД SxGeo
+            SxPath = CommonFunctions.SettingsPath +
+                CommonFunctions.SxGeoDir + CommonFunctions.SxGeoCity;
+            IPGeoinfo tmpGeoInfo = new IPGeoinfo(SxPath);
+            if (tmpGeoInfo.IsValidSxGeoFile()) //SxGeoSity найдена и валидная
+            {
+                lblSxGeoStatus.ForeColor = Color.Green;
+                lblSxGeoStatus.Text = "БД SxGeoCity готова";
+                btnSxGeoInfo.Enabled = true;
+            }
+            else
+            {
+                SxPath = CommonFunctions.SettingsPath +
+                CommonFunctions.SxGeoDir + CommonFunctions.SxGeoCountry;
+                tmpGeoInfo = new IPGeoinfo(SxPath);
+                if (tmpGeoInfo.IsValidSxGeoFile()) //SxGeoCountry найдена и валидная
+                {
+                    lblSxGeoStatus.ForeColor = Color.Green;
+                    lblSxGeoStatus.Text = "БД SxGeoCountry готова";
+                    btnSxGeoInfo.Enabled = true;
+                }
+                else
+                {
+                    lblSxGeoStatus.ForeColor = Color.Brown;
+                    lblSxGeoStatus.Text = tmpGeoInfo.ErrorMessage;
+                    SxPath = string.Empty;
+                    btnSxGeoInfo.Enabled = false;
+                }
+            }
+        }
+
         private void btnOptions_Click(object sender, EventArgs e)
         {
             frmOptions fOptions = new frmOptions();
@@ -205,14 +244,28 @@ namespace DetecTOR
 
         private void frmMain_Shown(object sender, EventArgs e)
         {
-            if (settings.Settings.LoadUpdate)
+            if (!Directory.Exists(CommonFunctions.SettingsPath +
+                CommonFunctions.TorDir))
+            {
+                try
+                {
+                    Directory.CreateDirectory(CommonFunctions.SettingsPath +
+                CommonFunctions.TorDir);
+                }
+                catch(Exception ex)
+                {
+                    lblMessage.Text = ex.Message;
+                    lblMessage.ForeColor = Color.Red;
+                }
+            }
+            
+            if (settings.Settings.LoadUpdate || CommonFunctions.UpdateInvariant)
             {
                 LoadTORData();
             }
             else
             {
-                if (!File.Exists(CommonFunctions.SettingsPath +
-                    CommonFunctions.IPDatabaseFile))
+                if (!File.Exists(TorPath))
                 {
                     LoadTORData();
                 }
@@ -221,6 +274,8 @@ namespace DetecTOR
                     AnalyseTorData();
                 }
             }
+
+            ValidateSxGeo();
         }
 
         private void btnViewAll_Click(object sender, EventArgs e)
@@ -231,8 +286,8 @@ namespace DetecTOR
         }
 
         private void btnFind_Click(object sender, EventArgs e)
-        {
-            if (!CSVWork.isIP(ipAddr.Text))
+        {            
+            if (!IPConverter.IsIP(ipAddr.Text))
             {
                 lblMessage.ForeColor = Color.Red;
                 lblMessage.Text = "Введите правильный IP-адрес!";
@@ -243,6 +298,8 @@ namespace DetecTOR
                     CommonFunctions.ColumnsDesrFile);
             cd.LoadData();
 
+            CSVLoader.OutputGrid = grdAnswer;
+            CSVLoader.ClearFind();
             int count = CSVLoader.Find(ipAddr.Text, cd);
 
             if (count == 0)
@@ -262,14 +319,31 @@ namespace DetecTOR
             {
                 lblMessage.ForeColor = Color.Green;
                 lblMessage.Text = "IP " + ipAddr.Text + " найден в базе данных TOR. "+
-                    count.ToString()+" вхождений";
-
-                grdAnswer.DataSource = CSVLoader.dsTorData.Tables[CSVLoader.
-                    FindResultTableName];
-                
-                grdAnswer.Columns[0].HeaderText = "Параметр";
-                grdAnswer.Columns[1].HeaderText = "Значение";
+                    count.ToString()+" вхождений";                
             }
+
+            if (!string.IsNullOrEmpty(SxPath))
+            {
+                IPGeoinfo GeoInfo = new IPGeoinfo(SxPath);
+
+                if (!GeoInfo.Open())
+                {
+                    lblMessage.ForeColor = Color.Red;
+                    lblMessage.Text = lblMessage.Text + "Ошибка SxGeo: " +
+                        GeoInfo.ErrorMessage;
+                    return;
+                }
+
+                if (grdAnswer.Columns.Count < 2)
+                {
+                    grdAnswer.Columns.Add("Desr", "Параметр");
+                    grdAnswer.Columns.Add("Value", "Значение");
+                }
+
+                GeoInfo.AddToDataGridView(ipAddr.Text, grdAnswer, cd);
+                
+                lblMessage.Text = lblMessage.Text + " Поиск по базе SxGeo выполнен.";
+            }            
         }
 
         private void ipAddr_KeyUp(object sender, KeyEventArgs e)
@@ -318,15 +392,27 @@ namespace DetecTOR
             DialogResult Ans = dlgSave.ShowDialog();
             if (Ans == DialogResult.Cancel) return;
 
-            if (!CSVLoader.SaveFind(dlgSave.FileName))
+            PrintReport printReport = new PrintReport(dlgSave.FileName, grdAnswer);
+            if (!printReport.SaveFromGrid())
             {
                 lblMessage.ForeColor = Color.Red;
-                lblMessage.Text = CSVLoader.ErrorMessage;
+                lblMessage.Text = printReport.ErrorMessage;
             }
             else
             {
                 lblMessage.ForeColor = Color.Green;
                 lblMessage.Text = "Сохранено в " + dlgSave.FileName;
+
+                Ans = MessageBox.Show("Открыть сохраненный файл?","Вопрос", 
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (Ans == DialogResult.No) return;
+
+                string tmpMsg = CommonFunctions.OpenFile(dlgSave.FileName);
+                if (tmpMsg != string.Empty)
+                {
+                    lblMessage.ForeColor = Color.Red;
+                    lblMessage.Text = tmpMsg;
+                }
             }
         }
 
@@ -357,6 +443,131 @@ namespace DetecTOR
         {
             frmReadme fReadme = new frmReadme();
             fReadme.Show();
+        }
+
+        private void btnUptateSxGeo_Click(object sender, EventArgs e)
+        {            
+            DialogResult Ans = dlgOpenSxG.ShowDialog();
+            if (Ans == DialogResult.Cancel) return;
+            string ResultMess="";
+            string srcpath = CommonFunctions.AddSlash(dlgOpenSxG.SelectedPath)
+                + CommonFunctions.SxGeoCountry;
+            string dstpath = CommonFunctions.SettingsPath +
+                CommonFunctions.SxGeoDir + CommonFunctions.SxGeoCountry;
+
+            //ищем файл SxGeoCountry
+            IPGeoinfo tmpGeoInfo = new IPGeoinfo(srcpath);
+            if (tmpGeoInfo.IsValidSxGeoFile())
+            {
+                ResultMess = "Файл " + CommonFunctions.SxGeoCountry + " найден. \n"
+                    + CommonFunctions.CopyFile(srcpath, dstpath) + "\n";
+            }
+            else
+            {
+                ResultMess = "Файл " + CommonFunctions.SxGeoCountry + ": " 
+                    + tmpGeoInfo.ErrorMessage + "\n";
+            }
+
+            //ищем файл SxGeoCity
+            srcpath = CommonFunctions.AddSlash(dlgOpenSxG.SelectedPath)
+                + CommonFunctions.SxGeoCity;
+            dstpath = CommonFunctions.SettingsPath +
+                CommonFunctions.SxGeoDir + CommonFunctions.SxGeoCity;
+
+            tmpGeoInfo = new IPGeoinfo(srcpath);
+            if (tmpGeoInfo.IsValidSxGeoFile())
+            {
+                ResultMess = ResultMess + "Файл " + CommonFunctions.SxGeoCity + " найден. \n"
+                    + CommonFunctions.CopyFile(srcpath, dstpath);
+            }
+            else
+            {
+                ResultMess = ResultMess + "Файл " + CommonFunctions.SxGeoCity + ": " 
+                    + tmpGeoInfo.ErrorMessage;
+            }
+
+            MessageBox.Show(ResultMess, "Результат обновления",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            ValidateSxGeo();
+
+        }
+
+        private void btnSxGeoInfo_Click(object sender, EventArgs e)
+        {
+            SxGeoDB tmpSxDB = new SxGeoDB(SxPath);
+            if (!tmpSxDB.OpenDB())
+            {
+                lblMessage.ForeColor = Color.Red;
+                lblMessage.Text = tmpSxDB.ErrorMessage;
+                lblSxGeoStatus.Text = "Ошибка.";
+                lblSxGeoStatus.ForeColor = Color.Brown;
+                return;
+            }
+            frmInfo fInfo = new frmInfo();
+            fInfo.Header = tmpSxDB.GetHeader();
+            fInfo.DBPath = SxPath;
+            fInfo.ShowDialog();
+            tmpSxDB.CloseDB();
+        }
+
+        private void btnBatchFind_Click(object sender, EventArgs e)
+        {
+            DialogResult Ans = dlgOpen.ShowDialog();
+            if (Ans == DialogResult.Cancel) return;
+            dlgSaveBatch.FileName = "";
+            Ans = dlgSaveBatch.ShowDialog();
+            if (Ans == DialogResult.Cancel) return;
+            ReportName = dlgSaveBatch.FileName;
+
+            ColumnsData cd = new ColumnsData(CommonFunctions.SettingsPath +
+                    CommonFunctions.ColumnsDesrFile);
+            cd.LoadData();
+
+            IPBatchFinder Finder = new IPBatchFinder(dlgOpen.FileName,
+                ReportName, CSVLoader, cd);
+            Finder.AllTorData = settings.Settings.AllTorData;
+            Finder.SxPath = SxPath;
+            Finder.StatusChange += new IPBatchFinder.OnStatusChange(Finder_StatusChange);
+            Finder.Start();
+        }
+
+        void Finder_StatusChange(object sender, BatchFinderStatusEventArgs e)
+        {
+            Invoke((MethodInvoker)delegate
+            {
+                lblMessage.Text = e.Message;
+                switch (e.Status)
+                {
+                    case BatchFinderStatus.Complete:
+                        {
+                            lblMessage.ForeColor = Color.Green;
+                            pbConnecting.Visible = false;
+
+                            DialogResult Ans = MessageBox.Show("Открыть сохраненный отчет?",
+                                "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                            if (Ans == DialogResult.No) return;
+
+                            string tmpMsg = CommonFunctions.OpenFile(ReportName);
+                            if (tmpMsg != string.Empty)
+                            {
+                                lblMessage.ForeColor = Color.Red;
+                                lblMessage.Text = tmpMsg;
+                            }
+
+                        }; break;
+                    case BatchFinderStatus.Working:
+                        {
+                            if (!pbConnecting.Visible) pbConnecting.Visible = true;
+                            lblMessage.ForeColor = Color.Blue;
+                        }; break;
+                    case BatchFinderStatus.Error:
+                        {
+                            lblMessage.ForeColor = Color.Red;
+                            pbConnecting.Visible = false;
+                        }; break;
+                }                
+            });
         }
     }
 }

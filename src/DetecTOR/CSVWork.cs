@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data;
 using System.IO;
-using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace DetecTOR
 {
@@ -23,7 +23,7 @@ namespace DetecTOR
         public event OnOK OK;
 
         public string TableName { get; private set; }
-        public string FindResultTableName { get; private set; } 
+        public DataGridView OutputGrid { get; set; }
         public char Divider { get; set; }
         public string FileName { get; set; }
         public string Flag { get; set; }
@@ -35,11 +35,10 @@ namespace DetecTOR
         
         public FormatType DataFormat { get; set; }
         
-        public DataSet dsTorData = null;
+        public DataSet dsTorData = null;        
 
         public CSVWork()
-        {
-            FindResultTableName = "FindResult";
+        {            
             TableName = "TorDataTable";
             dsTorData = new DataSet();
         }
@@ -117,12 +116,10 @@ namespace DetecTOR
             if (selected == null) return 0;
             if (selected.Length == 0) return 0;
 
-            if (dsTorData.Tables[FindResultTableName] != null) 
-                dsTorData.Tables.Remove(FindResultTableName);
-
-            dsTorData.Tables.Add(FindResultTableName);
-            dsTorData.Tables[FindResultTableName].Columns.Add("Desr",typeof (string ));
-            dsTorData.Tables[FindResultTableName].Columns.Add("Value", typeof(string ));
+            OutputGrid.Columns.Clear();                
+            
+            OutputGrid.Columns.Add("Desr","Параметр");
+            OutputGrid.Columns.Add("Value", "Значение");
 
             foreach (DataRow row in selected)
             {
@@ -130,81 +127,66 @@ namespace DetecTOR
                 {
                     string Desr = cd.GetDesription(col.ColumnName);
                     string  Value = row[col].ToString();
-                    dsTorData.Tables[FindResultTableName].Rows.Add(Desr, Value);
+                    OutputGrid.Rows.Add(Desr, Value);
                 }
             }
             return selected.Length;
         }
 
-        public static string AESP(string Str, int Size)
-        {
-            if (Str.Length >= Size) return Str;
-            Str = Str.PadRight(Size, ' ');
-            return Str;
-        }
-
-
-        private int GetMaxDesrLen()
-        {
-            int MaxLen = 0;
-            foreach (DataRow row in dsTorData.Tables[FindResultTableName].Rows)
-            {
-                string s = row["Desr"].ToString();
-                if (s.Length > MaxLen) MaxLen = s.Length;
-            }
-            return MaxLen;
-        }
-
-        public bool SaveFind(string filename)
+        public List <string>  FindList(string IP)
         {
             CSVErrorEventArgs e = new CSVErrorEventArgs();
-
-            if (dsTorData.Tables[FindResultTableName] == null)
-            {                
-                ErrorMessage = "No data to save!";
-                e.ErrorMessage = ErrorMessage;
-                if (CSVError != null) CSVError(e);
-                return false;
-            }
-
-            if (dsTorData.Tables[FindResultTableName].Rows.Count == 0)
-            {
-                ErrorMessage = "No data to save!";
-                e.ErrorMessage = ErrorMessage;
-                if (CSVError != null) CSVError(e);
-                return false;
-            }
-
-            int max = GetMaxDesrLen();
-
-            string buf = string.Empty;
-
-            foreach (DataRow row in dsTorData.Tables[FindResultTableName].Rows)
-            {
-                buf = buf + AESP(row["Desr"].ToString(),max) + "\t" + row["Value"];
-
-                buf = buf + "\r\n";
-            }
-
+            DataRow[] selected = null;
+            if (DataFormat == FormatType.IPList) IPField = "IP";
             try
             {
-                File.WriteAllText(filename, buf, Encoding.GetEncoding(1251));
+                selected = dsTorData.Tables[TableName].
+                    Select("[" + IPField + "]='" + IP + "'");
             }
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
-                e.ErrorMessage = ErrorMessage;
+                e.ErrorMessage = ex.Message;
                 if (CSVError != null) CSVError(e);
-                return false;
+                return null;
             }
+
+            List<string> bufList = new List<string>();
+
+            if (selected == null) return null;
+            if (selected.Length == 0) return bufList;
             
-            return true;
+
+            foreach (DataRow row in selected)
+            {
+                string outputSt = "";
+                foreach (DataColumn col in dsTorData.Tables[TableName].Columns)
+                {
+                    outputSt = outputSt + row[col].ToString() + ";";                    
+                }
+                bufList.Add(outputSt);
+            }
+            return bufList;
         }
+
+        public string GetDescriptions(ColumnsData CD)
+        {            
+            string[] buf = new string[dsTorData.Tables[TableName].Columns.Count];
+            int i = 0;
+
+            foreach (DataColumn col in dsTorData.Tables[TableName].Columns)
+            {
+                buf[i] = CD.GetDesription(col.ColumnName);
+                i++;
+            }
+
+            return string.Join(";", buf);
+        }
+        
 
         public void ClearFind()
         {
-            if (dsTorData.Tables[FindResultTableName] != null)
-                dsTorData.Tables.Remove(FindResultTableName);
+            OutputGrid.Columns.Clear();
         }
 
         public void ClearAll()
@@ -348,7 +330,7 @@ namespace DetecTOR
                 buf = buf.Trim(); //избавляемся от граничных пробелов
                 if (!string.IsNullOrEmpty(buf)) //если строка не пустая
                 {
-                    if (isIP(buf)) //если в строке IP
+                    if (IPConverter.IsIP(buf)) //если в строке IP
                     {
                         dsTorData.Tables[TableName].Rows.Add(buf);
                     }
@@ -377,29 +359,6 @@ namespace DetecTOR
             GetTimestamp();
             if (OK != null) OK();
         }
-
-        public static bool isIP(string IPAddress)
-        {
-            string[] IPArr = IPAddress.Split('.');
-
-            if (IPArr.Length != 4) return false;
-
-            byte b = 0;            
-
-            for (int i = 0; i < 4; i++)
-            {
-                try
-                {
-                    b = Convert.ToByte(IPArr[i]);
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }        
 
         public void Start()
         {

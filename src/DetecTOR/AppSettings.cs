@@ -23,6 +23,7 @@ namespace DetecTOR
         public string TrueValue { get; set; }
         public string FalseValue { get; set; }
         public bool LoadUpdate { get; set; }
+        public bool AllTorData { get; set; }
 
         public AppSettings()
         {
@@ -45,7 +46,10 @@ namespace DetecTOR
             Settings.IPColumn = "IP Address";
             Settings.FieldSeparator=",";
             Settings.TrueValue = "1";
-            Settings.FalseValue = "0";        
+            Settings.FalseValue = "0";
+
+            Settings.LoadUpdate = false;
+            Settings.AllTorData = false;
         }
 
         public bool SaveConfig()

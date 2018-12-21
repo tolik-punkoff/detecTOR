@@ -51,8 +51,8 @@ namespace DetecTOR
                     MessageBoxIcon.Exclamation);
                 return;
             }
-        }        
-                
+        }
+                        
         private void pctLogo_Click(object sender, EventArgs e)
         {
             try

@@ -43,13 +43,20 @@
             this.ipAddr = new IPAddressControlLib.IPAddressControl();
             this.dlgSave = new System.Windows.Forms.SaveFileDialog();
             this.pbConnecting = new System.Windows.Forms.PictureBox();
+            this.btnSxGeoInfo = new System.Windows.Forms.Button();
+            this.btnUptateSxGeo = new System.Windows.Forms.Button();
+            this.lblSxGeoStatus = new System.Windows.Forms.Label();
+            this.dlgOpenSxG = new System.Windows.Forms.FolderBrowserDialog();
+            this.btnBatchFind = new System.Windows.Forms.Button();
+            this.dlgOpen = new System.Windows.Forms.OpenFileDialog();
+            this.dlgSaveBatch = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.grdAnswer)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbConnecting)).BeginInit();
             this.SuspendLayout();
             // 
             // btnAbout
             // 
-            this.btnAbout.Location = new System.Drawing.Point(426, 299);
+            this.btnAbout.Location = new System.Drawing.Point(426, 369);
             this.btnAbout.Name = "btnAbout";
             this.btnAbout.Size = new System.Drawing.Size(84, 23);
             this.btnAbout.TabIndex = 24;
@@ -59,7 +66,7 @@
             // 
             // btnHelp
             // 
-            this.btnHelp.Location = new System.Drawing.Point(426, 268);
+            this.btnHelp.Location = new System.Drawing.Point(426, 340);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(84, 23);
             this.btnHelp.TabIndex = 23;
@@ -125,7 +132,7 @@
             this.grdAnswer.Location = new System.Drawing.Point(4, 73);
             this.grdAnswer.Name = "grdAnswer";
             this.grdAnswer.ReadOnly = true;
-            this.grdAnswer.Size = new System.Drawing.Size(416, 249);
+            this.grdAnswer.Size = new System.Drawing.Size(416, 319);
             this.grdAnswer.TabIndex = 17;
             // 
             // btnFind
@@ -185,11 +192,69 @@
             this.pbConnecting.TabStop = false;
             this.pbConnecting.Visible = false;
             // 
+            // btnSxGeoInfo
+            // 
+            this.btnSxGeoInfo.Location = new System.Drawing.Point(426, 311);
+            this.btnSxGeoInfo.Name = "btnSxGeoInfo";
+            this.btnSxGeoInfo.Size = new System.Drawing.Size(84, 23);
+            this.btnSxGeoInfo.TabIndex = 28;
+            this.btnSxGeoInfo.Text = "О БД SxGeo";
+            this.btnSxGeoInfo.UseVisualStyleBackColor = true;
+            this.btnSxGeoInfo.Click += new System.EventHandler(this.btnSxGeoInfo_Click);
+            // 
+            // btnUptateSxGeo
+            // 
+            this.btnUptateSxGeo.Location = new System.Drawing.Point(426, 268);
+            this.btnUptateSxGeo.Name = "btnUptateSxGeo";
+            this.btnUptateSxGeo.Size = new System.Drawing.Size(86, 37);
+            this.btnUptateSxGeo.TabIndex = 29;
+            this.btnUptateSxGeo.Text = "Обновить БД SxGeo";
+            this.btnUptateSxGeo.UseVisualStyleBackColor = true;
+            this.btnUptateSxGeo.Click += new System.EventHandler(this.btnUptateSxGeo_Click);
+            // 
+            // lblSxGeoStatus
+            // 
+            this.lblSxGeoStatus.AutoSize = true;
+            this.lblSxGeoStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lblSxGeoStatus.Location = new System.Drawing.Point(1, 395);
+            this.lblSxGeoStatus.Name = "lblSxGeoStatus";
+            this.lblSxGeoStatus.Size = new System.Drawing.Size(31, 13);
+            this.lblSxGeoStatus.TabIndex = 30;
+            this.lblSxGeoStatus.Text = "      ";
+            // 
+            // dlgOpenSxG
+            // 
+            this.dlgOpenSxG.Description = "Выберите папку, содержащую файлы SxGeo.dat, SxGeoSity.dat или оба этих файла.";
+            this.dlgOpenSxG.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            this.dlgOpenSxG.ShowNewFolderButton = false;
+            // 
+            // btnBatchFind
+            // 
+            this.btnBatchFind.Location = new System.Drawing.Point(301, 8);
+            this.btnBatchFind.Name = "btnBatchFind";
+            this.btnBatchFind.Size = new System.Drawing.Size(101, 23);
+            this.btnBatchFind.TabIndex = 31;
+            this.btnBatchFind.Text = "Пакетный поиск";
+            this.btnBatchFind.UseVisualStyleBackColor = true;
+            this.btnBatchFind.Click += new System.EventHandler(this.btnBatchFind_Click);
+            // 
+            // dlgOpen
+            // 
+            this.dlgOpen.Filter = "Текстовые файлы (*.txt)|*.txt|Все файлы (*.*)|*.*";
+            // 
+            // dlgSaveBatch
+            // 
+            this.dlgSaveBatch.Filter = "Файлы CSV (*.csv)|*.csv|Все файлы (*.*)|*.*";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(514, 330);
+            this.ClientSize = new System.Drawing.Size(516, 409);
+            this.Controls.Add(this.btnBatchFind);
+            this.Controls.Add(this.lblSxGeoStatus);
+            this.Controls.Add(this.btnUptateSxGeo);
+            this.Controls.Add(this.btnSxGeoInfo);
             this.Controls.Add(this.pbConnecting);
             this.Controls.Add(this.ipAddr);
             this.Controls.Add(this.btnAbout);
@@ -234,6 +299,13 @@
         private IPAddressControlLib.IPAddressControl ipAddr;
         private System.Windows.Forms.PictureBox pbConnecting;
         private System.Windows.Forms.SaveFileDialog dlgSave;
+        private System.Windows.Forms.Button btnSxGeoInfo;
+        private System.Windows.Forms.Button btnUptateSxGeo;
+        private System.Windows.Forms.Label lblSxGeoStatus;
+        private System.Windows.Forms.FolderBrowserDialog dlgOpenSxG;
+        private System.Windows.Forms.Button btnBatchFind;
+        private System.Windows.Forms.OpenFileDialog dlgOpen;
+        private System.Windows.Forms.SaveFileDialog dlgSaveBatch;
     }
 }
 

@@ -39,6 +39,7 @@
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnNetworkOption = new System.Windows.Forms.Button();
+            this.chkAllTorData = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -115,7 +116,7 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(7, 129);
+            this.btnOK.Location = new System.Drawing.Point(7, 154);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 4;
@@ -125,7 +126,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(320, 130);
+            this.btnCancel.Location = new System.Drawing.Point(320, 154);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 5;
@@ -143,11 +144,22 @@
             this.btnNetworkOption.UseVisualStyleBackColor = true;
             this.btnNetworkOption.Click += new System.EventHandler(this.btnNetworkOption_Click);
             // 
+            // chkAllTorData
+            // 
+            this.chkAllTorData.AutoSize = true;
+            this.chkAllTorData.Location = new System.Drawing.Point(7, 129);
+            this.chkAllTorData.Name = "chkAllTorData";
+            this.chkAllTorData.Size = new System.Drawing.Size(368, 17);
+            this.chkAllTorData.TabIndex = 7;
+            this.chkAllTorData.Text = "Включать в отчет пакетной обработки дополнительные данные Tor";
+            this.chkAllTorData.UseVisualStyleBackColor = true;
+            // 
             // frmOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(400, 157);
+            this.ClientSize = new System.Drawing.Size(400, 181);
+            this.Controls.Add(this.chkAllTorData);
             this.Controls.Add(this.btnNetworkOption);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
@@ -182,5 +194,6 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnFormatOptions;
         private System.Windows.Forms.Button btnNetworkOption;
+        private System.Windows.Forms.CheckBox chkAllTorData;
     }
 }

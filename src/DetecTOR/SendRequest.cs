@@ -44,6 +44,7 @@ namespace DetecTOR
         public string ErrorMessage { get; private set; }
 
 
+        //Добавляет лидирующие нули
         public static string ALZ(string Str, int Size)
         {
             if (Str.Length >= Size) return Str;

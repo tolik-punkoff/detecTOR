@@ -87,6 +87,12 @@
     <Compile Include="frmFormatOptions.designer.cs">
       <DependentUpon>frmFormatOptions.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmInfo.designer.cs">
+      <DependentUpon>frmInfo.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmNetworkSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -105,7 +111,11 @@
     <Compile Include="frmViewAll.designer.cs">
       <DependentUpon>frmViewAll.cs</DependentUpon>
     </Compile>
+    <Compile Include="IPBatchFinder.cs" />
+    <Compile Include="IPConverter.cs" />
+    <Compile Include="IPGeoinfo.cs" />
     <Compile Include="NetSettings.cs" />
+    <Compile Include="PrintReport.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -125,6 +135,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmFormatOptions.resx">
       <DependentUpon>frmFormatOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmInfo.resx">
+      <DependentUpon>frmInfo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmNetworkSettings.resx">
       <DependentUpon>frmNetworkSettings.cs</DependentUpon>
@@ -164,6 +177,8 @@
       <DependentUpon>frmReadme.cs</DependentUpon>
     </Compile>
     <Compile Include="SendRequest.cs" />
+    <Compile Include="SxGeoDB.cs" />
+    <Compile Include="SxGeoUnpack.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\plus.png" />
@@ -185,6 +200,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app.ico" />
+    <None Include="Resources\logo.jpg" />
     <None Include="Resources\readme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

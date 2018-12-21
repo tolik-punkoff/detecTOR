@@ -51,8 +51,10 @@
             // 
             // pctLogo
             // 
+            this.pctLogo.BackgroundImage = global::DetecTOR.Properties.Resources.logo;
+            this.pctLogo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pctLogo.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pctLogo.Image = ((System.Drawing.Image)(resources.GetObject("pctLogo.Image")));
+            this.pctLogo.InitialImage = null;
             this.pctLogo.Location = new System.Drawing.Point(16, 24);
             this.pctLogo.Name = "pctLogo";
             this.pctLogo.Size = new System.Drawing.Size(291, 72);
@@ -67,7 +69,7 @@
             this.lblProgName.Name = "lblProgName";
             this.lblProgName.Size = new System.Drawing.Size(305, 20);
             this.lblProgName.TabIndex = 2;
-            this.lblProgName.Text = "DetecTOR";
+            this.lblProgName.Text = "DetecTOR v 0.3.0b";
             this.lblProgName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblCopyright
@@ -77,7 +79,7 @@
             this.lblCopyright.Name = "lblCopyright";
             this.lblCopyright.Size = new System.Drawing.Size(317, 50);
             this.lblCopyright.TabIndex = 3;
-            this.lblCopyright.Text = "(L) Hex_Laden [Wildsoft], 2013-2018";
+            this.lblCopyright.Text = "(L) Hex_Laden [Wildsoft], 2010-2018";
             this.lblCopyright.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // pctMessages
@@ -103,7 +105,6 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmAbout";
-            this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";

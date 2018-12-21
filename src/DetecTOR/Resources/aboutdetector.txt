@@ -4,7 +4,7 @@ addfont; Arial;14;Bold;Slogan;
 
 scene;20;
 addstring;DetecTOR;Group;
-addstring;v 0.2.0;Group;
+addstring;v 0.3.0b;Group;
 addstring;Распространяется бесплатно;Names;
 addstring;                      ;Names;
 addstring;Developers;Group;
@@ -31,6 +31,10 @@ addstring;Serega Nikolsky;Names;
 addstring;Использован компонент;Group;
 addstring;IP Address Control;Names;
 addstring;Ссылка на автора в README;Names;
+addstring;БД SxGeo;Group;
+addstring;© 2006-2018 zapimir;Names;
+addstring;© 2006-2018 BINOVATOR;Names;
+addstring;https://sypexgeo.net/;Names;
 addstring;Beer & Vodka;Group;
 addstring;Serega Nikolsky;Names;
 
