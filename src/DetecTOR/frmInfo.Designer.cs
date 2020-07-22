@@ -52,7 +52,7 @@
             this.grdInfo.DefaultCellStyle = dataGridViewCellStyle1;
             this.grdInfo.Location = new System.Drawing.Point(3, 2);
             this.grdInfo.Name = "grdInfo";
-            this.grdInfo.Size = new System.Drawing.Size(640, 437);
+            this.grdInfo.Size = new System.Drawing.Size(626, 437);
             this.grdInfo.TabIndex = 0;
             // 
             // btnOK
@@ -70,7 +70,7 @@
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(641, 469);
+            this.ClientSize = new System.Drawing.Size(629, 472);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.grdInfo);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
