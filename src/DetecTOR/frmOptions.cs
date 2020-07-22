@@ -64,10 +64,12 @@ namespace DetecTOR
             if (rbDataFormatIPAddInfo.Checked)
             {
                 btnFormatOptions.Enabled = true;
+                chkAllTorData.Enabled = true;
             }
             else
             {
                 btnFormatOptions.Enabled = false;
+                chkAllTorData.Enabled = false;
             }
         }
 

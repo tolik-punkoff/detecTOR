@@ -69,7 +69,7 @@
             this.lblProgName.Name = "lblProgName";
             this.lblProgName.Size = new System.Drawing.Size(305, 20);
             this.lblProgName.TabIndex = 2;
-            this.lblProgName.Text = "DetecTOR v 0.3.0b";
+            this.lblProgName.Text = "DetecTOR v 0.3.1b";
             this.lblProgName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblCopyright
@@ -79,7 +79,7 @@
             this.lblCopyright.Name = "lblCopyright";
             this.lblCopyright.Size = new System.Drawing.Size(317, 50);
             this.lblCopyright.TabIndex = 3;
-            this.lblCopyright.Text = "(L) Hex_Laden [Wildsoft], 2010-2018";
+            this.lblCopyright.Text = "(L) Hex_Laden [Wildsoft], 2010-2020";
             this.lblCopyright.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // pctMessages

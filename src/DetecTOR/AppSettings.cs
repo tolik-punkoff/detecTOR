@@ -40,8 +40,8 @@ namespace DetecTOR
         {
             fileName = filename;
 
-            Settings.DataUrl = "http://torstatus.blutmagie.de/query_export.php/Tor_query_EXPORT.csv";
-            Settings.DataFormat = FormatType.IPAddInfo;
+            Settings.DataUrl = "https://check.torproject.org/exit-addresses";
+            Settings.DataFormat = FormatType.IPList;
             Settings.FlagColumn = "Flag -";
             Settings.IPColumn = "IP Address";
             Settings.FieldSeparator=",";

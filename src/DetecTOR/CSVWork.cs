@@ -4,6 +4,7 @@ using System.Text;
 using System.Data;
 using System.IO;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace DetecTOR
 {
@@ -321,27 +322,27 @@ namespace DetecTOR
                 if (fs != null) fs.Close();
                 return;
             }
+
             dsTorData.Tables.Add(TableName); //добавляем в DataSet таблицу
-            dsTorData.Tables[TableName].Columns.Add("IP",typeof(string)); //И колонку для IP
-            string buf=string.Empty;
+            dsTorData.Tables[TableName].Columns.Add("IP",typeof(string)); //И колонку для IP            
+            //регулярка для IPv4
+            string rExpr = @"(25[0-5]|2[0-4]\d|[01]?\d\d?)(\.(25[0-5]|2[0-4]\d|[01]?\d\d?)){3}";
+            Regex IPRegex = new Regex(rExpr);
+            string buf=string.Empty; //чистим буфер
+            
             while (!sr.EndOfStream)
             {
-                buf = sr.ReadLine();                
+                buf = sr.ReadLine();//читаем строку
+                //да, если какой-то кривой формат данных, где половина адреса
+                //на следующей строке - то дупа!
                 buf = buf.Trim(); //избавляемся от граничных пробелов
                 if (!string.IsNullOrEmpty(buf)) //если строка не пустая
                 {
-                    if (IPConverter.IsIP(buf)) //если в строке IP
+                    //создаем коллекцию и ищем айпишники в строке
+                    MatchCollection mc = IPRegex.Matches(buf);
+                    foreach (Match m in mc) //добавляем IP в базу данных
                     {
-                        dsTorData.Tables[TableName].Rows.Add(buf);
-                    }
-                    else //А если какая-то ерунда...
-                    {
-                        ErrorMessage = "This is no IP list!";
-                        e.ErrorMessage = ErrorMessage;
-                        if (CSVError != null) CSVError(e);
-                        if (sr != null) sr.Close();
-                        if (fs != null) fs.Close();
-                        return;                         
+                        dsTorData.Tables[TableName].Rows.Add(m.Value);
                     }
                 }
             }
